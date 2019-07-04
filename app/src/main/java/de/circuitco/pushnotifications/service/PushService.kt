@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.util.Log
@@ -21,12 +22,12 @@ class PushService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         var push = Push()
         var kv = ""
-        remoteMessage.data.forEach({
+        remoteMessage.data.forEach {
             if (kv.isNotEmpty()) {
                 kv += ","
             }
             kv += "\""+it.key+"\": \""+it.value+"\""
-        })
+        }
         kv = """{$kv}"""
         Log.e("Test", kv);
         push.originalData = kv
@@ -68,18 +69,20 @@ class PushService : FirebaseMessagingService() {
         manager.createNotificationChannel(chan)
     }
 
+    override fun onNewToken(token: String) {
+        // Report to server, remove previous token
+        saveToken(token, this)
+    }
 
-//    /**
-//     * Creates an IntentService.  Invoked by your subclass's constructor.
-//     *
-//     * @param name Used to name the worker thread, important only for debugging.
-//     */
-//    public PushService(String name) {
-//        super("ZncPushService");
-//    }
+    companion object {
+        private var FCM_KEY = "fcmkey"
+        fun getToken(context: Context): String {
+            return context.getSharedPreferences("", 0).getString(FCM_KEY, "")
+        }
 
-//    @Override
-//    protected void onHandleIntent(@Nullable Intent intent) {
-//
-//    }
+        fun saveToken(token: String, context: Context) {
+            val prefs = context.getSharedPreferences("", 0)
+            prefs.edit().putString(FCM_KEY, token).apply()
+        }
+    }
 }

@@ -1,0 +1,18 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <searchConfiguration name="methods for use in a qa context only" text="$Instance$.$MethodCall$($Parameter$)" recursive="false" caseInsensitive="true" type="JAVA">
+        <constraint name="Instance" minCount="0" within="" contains="" />
+        <constraint name="MethodCall" reference="qa only methods" target="true" within="" contains="" />
+        <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="qa only methods" text="@VisibleForQA&#10;$ReturnType$ $Method$($ParameterType$ $Parameter$);" recursive="false" caseInsensitive="true" type="JAVA">
+        <constraint name="ReturnType" within="" contains="" />
+        <constraint name="Method" within="" contains="" />
+        <constraint name="ParameterType" within="" contains="" />
+        <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+      </searchConfiguration>
+    </inspection_tool>
+  </profile>
+</component>
