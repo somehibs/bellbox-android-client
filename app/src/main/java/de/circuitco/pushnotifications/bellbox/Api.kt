@@ -27,13 +27,18 @@ class Api(val queue: RequestQueue) {
     }
 
     private fun PostObj(path : String, token : String, request: JSONObject, responseCallback: ApiResponse) {
-        val jsonObjectRequest = JsonObjectRequest(Request.Method.POST, getUrl() + path, request, Response.Listener {
+        val jsonObjectRequest = object : JsonObjectRequest(Request.Method.POST, getUrl() + path, request, Response.Listener {
             responseCallback.onResponse(it)
         }, Response.ErrorListener {
             responseCallback.onFail()
-        })
-        if (token != "") {
-            AddAuthHeader(token, jsonObjectRequest as Request<Any>)
+        }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String,String>()
+                if (token != "") {
+                    headers[AUTH_HEADER] = token
+                }
+                return headers
+            }
         }
         queue.add(jsonObjectRequest)
     }
@@ -75,7 +80,7 @@ class Api(val queue: RequestQueue) {
     }
 
     private fun GetArray(path: String, token: String, responseCallback: ApiArrayResponse) {
-        val jsonObjectRequest = JsonArrayRequest(
+        val jsonObjectRequest = object : JsonArrayRequest(
                 getUrl() + path,
                 Response.Listener {
                     responseCallback.onResponse(it)
@@ -83,8 +88,13 @@ class Api(val queue: RequestQueue) {
                 Response.ErrorListener {
                     responseCallback.onFail()
                 }
-        )
-        AddAuthHeader(token, jsonObjectRequest as Request<Any>)
+        ) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String,String>()
+                headers[AUTH_HEADER] = token
+                return headers
+            }
+        }
         queue.add(jsonObjectRequest)
     }
 

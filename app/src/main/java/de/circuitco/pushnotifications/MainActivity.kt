@@ -1,6 +1,7 @@
 package de.circuitco.pushnotifications
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,24 +9,41 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
-import com.google.firebase.iid.FirebaseInstanceId
+import de.circuitco.pushnotifications.bellbox.ApiManager
+import de.circuitco.pushnotifications.bells.BellFragment
+import de.circuitco.pushnotifications.login.LoginActivity
 import de.circuitco.pushnotifications.model.AppDatabase.getDatabase
 import de.circuitco.pushnotifications.model.Push
 import de.circuitco.pushnotifications.service.PushService
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val logTag = "MainActivity"
 
-    private var all = List(0, {Push()})
+    private var all = List(0) {Push()}
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStackImmediate()
+        } else {
+            super.onBackPressed()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        if (!ApiManager.instance.isLoggedIn()) {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if ( item.itemId == R.id.get_push_id ) {
             Toast.makeText(this, "PUSHID: " + PushService.getToken(this), Toast.LENGTH_LONG).show()
+        } else if (item.itemId == R.id.show_bells) {
+            // Set the primary content view
+            supportFragmentManager.beginTransaction().add(R.id.container, BellFragment()).addToBackStack("").commit()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -53,12 +71,10 @@ class MainActivity : AppCompatActivity() {
             infoText += it.title + "\n" + it.originalData + "\n\n"
         }
 
-        //info.text = infoText
-        info.text = "${PushService.getToken(this)} $infoText"
+        info.text = infoText
+//        info.text = "${PushService.getToken(this)} $infoText"
 
-        val LOG_TAG = "wat"
-        Log.e(LOG_TAG,FirebaseInstanceId.getInstance().token ?: "no token")
+        val LOG_TAG = "token"
+        Log.e(LOG_TAG,PushService.getToken(this))
     }
-
-
 }
