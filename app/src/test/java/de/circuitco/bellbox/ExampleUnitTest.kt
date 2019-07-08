@@ -1,4 +1,4 @@
-package de.circuitco.pushnotifications
+package de.circuitco.bellbox
 
 import org.junit.Test
 

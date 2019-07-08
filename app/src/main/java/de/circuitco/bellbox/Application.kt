@@ -1,11 +1,11 @@
-package de.circuitco.pushnotifications
+package de.circuitco.bellbox
 
 import android.app.Application
-import de.circuitco.pushnotifications.bellbox.ApiManager
+import de.circuitco.bellbox.bellbox.ApiManager
 
 class Application : Application() {
     companion object {
-        lateinit var instance: de.circuitco.pushnotifications.Application
+        lateinit var instance: de.circuitco.bellbox.Application
     }
 
     override fun onCreate() {

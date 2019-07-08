@@ -1,4 +1,4 @@
-package de.circuitco.pushnotifications.model;
+package de.circuitco.bellbox.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -19,4 +19,6 @@ public class Push {
     public String title;
     @ColumnInfo(name = "description")
     public String description;
+    @ColumnInfo(name = "sender")
+    public String sender;
 }

@@ -1,17 +1,20 @@
-package de.circuitco.pushnotifications.service;
+package de.circuitco.bellbox.service;
 
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import de.circuitco.pushnotifications.R
-import de.circuitco.pushnotifications.model.AppDatabase
-import de.circuitco.pushnotifications.model.Push
+import de.circuitco.bellbox.MainActivity
+import de.circuitco.bellbox.R
+import de.circuitco.bellbox.model.AppDatabase
+import de.circuitco.bellbox.model.Push
 
 /**
  * Created by alex on 1/20/2018.
@@ -30,7 +33,9 @@ class PushService : FirebaseMessagingService() {
         kv = """{$kv}"""
         Log.e("Test", kv);
         push.originalData = kv
-        push.description = remoteMessage.data["message"]
+        push.description = remoteMessage.data["body"]
+        push.title = remoteMessage.data["title"]
+        push.sender = remoteMessage.data["sender"]
         AppDatabase.getDatabase(this).pushDao().insert(push)
         notify(remoteMessage.data)
     }
@@ -57,6 +62,7 @@ class PushService : FirebaseMessagingService() {
             builder.setContentTitle(data["title"])
             builder.setContentText(data["body"])
             builder.setSmallIcon(R.drawable.irc)
+            builder.setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
 
             manager.notify(e, builder.build())
         }

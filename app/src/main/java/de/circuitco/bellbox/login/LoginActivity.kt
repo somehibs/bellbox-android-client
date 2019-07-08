@@ -1,15 +1,15 @@
-package de.circuitco.pushnotifications.login
+package de.circuitco.bellbox.login
 
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import de.circuitco.pushnotifications.Application
-import de.circuitco.pushnotifications.MainActivity
-import de.circuitco.pushnotifications.R
-import de.circuitco.pushnotifications.bellbox.*
-import de.circuitco.pushnotifications.service.PushService
+import de.circuitco.bellbox.Application
+import de.circuitco.bellbox.MainActivity
+import de.circuitco.bellbox.R
+import de.circuitco.bellbox.bellbox.*
+import de.circuitco.bellbox.service.PushService
 import kotlinx.android.synthetic.main.login.*
 import org.json.JSONArray
 import org.json.JSONObject

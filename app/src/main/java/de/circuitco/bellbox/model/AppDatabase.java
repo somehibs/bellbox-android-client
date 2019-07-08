@@ -1,4 +1,4 @@
-package de.circuitco.pushnotifications.model;
+package de.circuitco.bellbox.model;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;

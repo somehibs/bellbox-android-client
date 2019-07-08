@@ -1,52 +1,37 @@
 {
   "project_info": {
-    "project_number": "460758820891",
-    "firebase_url": "https://pushnotifications-7b92d.firebaseio.com",
-    "project_id": "pushnotifications-7b92d",
-    "storage_bucket": "pushnotifications-7b92d.appspot.com"
+    "project_number": "900843533224",
+    "firebase_url": "https://bellbox-7b760.firebaseio.com",
+    "project_id": "bellbox-7b760",
+    "storage_bucket": "bellbox-7b760.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:460758820891:android:01810831fad80781",
+        "mobilesdk_app_id": "1:900843533224:android:ad1fdeed3e3fb41a",
         "android_client_info": {
-          "package_name": "de.circuitco.pushnotifications"
+          "package_name": "de.circuitco.bellbox"
         }
       },
       "oauth_client": [
         {
-          "client_id": "460758820891-5535bipvt6u5ovmoe3pp9sb376vin9g1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "de.circuitco.pushnotifications",
-            "certificate_hash": "7ae433c15cf670f241f63ecf795e28e74a30a62f"
-          }
-        },
-        {
-          "client_id": "460758820891-u9if4en41kgurlbciu3vibe6roqb5qkj.apps.googleusercontent.com",
+          "client_id": "900843533224-9208uaku6gtc62ar2t4go4lbuc60ktph.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCIHhuYaHjBLmtWEzDeb_YSiuOY_ko8SMM"
+          "current_key": "AIzaSyAAMJLivxxpPJuvrs8SMRCQykthga1Qreg"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "460758820891-u9if4en41kgurlbciu3vibe6roqb5qkj.apps.googleusercontent.com",
+              "client_id": "900843533224-9208uaku6gtc62ar2t4go4lbuc60ktph.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

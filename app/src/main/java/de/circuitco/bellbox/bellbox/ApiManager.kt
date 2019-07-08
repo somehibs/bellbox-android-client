@@ -1,4 +1,4 @@
-package de.circuitco.pushnotifications.bellbox
+package de.circuitco.bellbox.bellbox
 
 import android.content.Context
 import android.content.SharedPreferences
