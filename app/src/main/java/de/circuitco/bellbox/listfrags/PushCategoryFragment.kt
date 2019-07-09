@@ -1,6 +1,7 @@
 package de.circuitco.bellbox.listfrags
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import de.circuitco.bellbox.BellboxFragment
 import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.model.AppDatabase
@@ -20,7 +22,9 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 
 @SuppressLint("SetTextI18n")
-class PushCategoryFragment : Fragment(), OnCategoryClick {
+class PushCategoryFragment : BellboxFragment(), OnCategoryClick {
+    override fun getBarTitle(): String = "Inbox"
+
     override fun click(category: String) {
         (activity as MainActivity).setFrag(PushFragment.new(category))
     }
@@ -37,8 +41,8 @@ class PushCategoryFragment : Fragment(), OnCategoryClick {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun refresh() {
+        super.refresh()
         // Refresh from the server
         GlobalScope.launch {
             refreshFromDatabase()

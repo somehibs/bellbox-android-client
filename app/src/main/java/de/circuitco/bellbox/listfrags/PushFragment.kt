@@ -1,6 +1,7 @@
 package de.circuitco.bellbox.listfrags
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import de.circuitco.bellbox.BellboxFragment
 import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.model.AppDatabase
@@ -21,8 +23,16 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 
 @SuppressLint("SetTextI18n")
-class PushFragment : Fragment() {
+class PushFragment : BellboxFragment() {
+    override fun getBarTitle(): String = "From $sender"
+
     var sender = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        sender = arguments?.getString("SENDER") ?: ""
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bells, container, false)
@@ -38,8 +48,11 @@ class PushFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh from the server
-        sender = arguments?.getString("SENDER") ?: ""
+        refresh()
+    }
+
+    override fun refresh() {
+        super.refresh()
         GlobalScope.launch {
             refreshFromDatabase()
         }

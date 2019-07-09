@@ -1,6 +1,7 @@
 package de.circuitco.bellbox.listfrags
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import de.circuitco.bellbox.BellboxFragment
+import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.bellbox.Api
 import de.circuitco.bellbox.bellbox.ApiArrayResponse
@@ -22,7 +25,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 @SuppressLint("SetTextI18n")
-class BellFragment : Fragment(), ApiArrayResponse {
+class BellFragment : BellboxFragment(), ApiArrayResponse {
+    override fun getBarTitle(): String = "Bells"
+
     override fun onFail() {
         errorText.text = "Failed to fetch bells from server"
     }
@@ -45,9 +50,9 @@ class BellFragment : Fragment(), ApiArrayResponse {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Refresh from the server
+    override fun refresh() {
+        super.refresh()
+
         Api.instance.MapBells(ApiManager.instance.token, this)
     }
 }

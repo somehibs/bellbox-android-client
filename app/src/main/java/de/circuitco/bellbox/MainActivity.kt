@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStackImmediate()
+            val visibleFragment = supportFragmentManager.fragments[supportFragmentManager.fragments.size-1]
+            (visibleFragment as BellboxFragment).refresh()
         } else {
             super.onBackPressed()
         }
@@ -91,5 +93,9 @@ class MainActivity : AppCompatActivity() {
 //
 //        val LOG_TAG = "token"
 //        Log.e(LOG_TAG,PushService.getToken(this))
+    }
+
+    fun setBarTitle(barTitle: String) {
+        supportActionBar?.title = barTitle
     }
 }

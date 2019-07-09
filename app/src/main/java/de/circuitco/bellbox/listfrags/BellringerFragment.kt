@@ -1,6 +1,7 @@
 package de.circuitco.bellbox.listfrags
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -11,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import de.circuitco.bellbox.BellboxFragment
+import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.bellbox.Api
 import de.circuitco.bellbox.bellbox.ApiArrayResponse
@@ -20,7 +23,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 @SuppressLint("SetTextI18n")
-class BellringerFragment : Fragment(), ApiArrayResponse {
+class BellringerFragment : BellboxFragment(), ApiArrayResponse {
+    override fun getBarTitle(): String = "Bellringers"
+
     override fun onFail() {
         errorText.text = "Failed to fetch bells from server"
     }
@@ -49,9 +54,8 @@ class BellringerFragment : Fragment(), ApiArrayResponse {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Refresh from the server
+    override fun refresh() {
+        super.refresh()
         Api.instance.MapSenders(ApiManager.instance.token, this)
     }
 }
