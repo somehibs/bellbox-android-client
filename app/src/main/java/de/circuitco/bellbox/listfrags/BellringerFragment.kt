@@ -58,8 +58,14 @@ class BellringerListAdapter(val json: JSONArray) : RecyclerView.Adapter<Bellring
 
     override fun onBindViewHolder(holder: BellringerViewHolder, position: Int) {
         val thisObject = json.getJSONObject(position)
+        val rqs = when (thisObject.getString("RequestState")) {
+            "0" -> "Pending"
+            "1" -> "Allowed"
+            "2" -> "Denied"
+            else -> "Unknown state"
+        }
         holder.name?.text = thisObject.getString("Name")
-        holder.type?.text = "${thisObject.getString("Target")} ${thisObject.getString("RequestState")}"
+        holder.type?.text = "${thisObject.getString("Target")} $rqs"
         holder.key?.text = thisObject.getString("Urgent")
         holder.view.setOnLongClickListener {
             Toast.makeText(holder.view.context, "Name ${holder.name?.text} ${holder.key?.text}", Toast.LENGTH_LONG).show()

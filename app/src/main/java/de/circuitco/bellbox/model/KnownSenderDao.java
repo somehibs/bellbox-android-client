@@ -12,27 +12,27 @@ import java.util.List;
  */
 
 @Dao
-public interface PushDao {
-    @Query("SELECT * FROM push")
+public interface KnownSenderDao {
+    @Query("SELECT * FROM knownsender")
     List<Push> getAll();
 
-    @Query("SELECT * FROM push WHERE uid IN (:userIds)")
-    List<Push> findByIds(int[] userIds);
+    @Query("SELECT * FROM knownsender WHERE uid IN (:ids)")
+    List<Push> findByIds(int[] ids);
 
-    @Query("SELECT * FROM push WHERE sender = :sender ORDER BY uid DESC")
+    @Query("SELECT * FROM knownsender WHERE sender = :sender")
     List<Push> findBySender(String sender);
 
-    @Query("SELECT COUNT(*) FROM push WHERE sender = :sender")
+    @Query("SELECT COUNT(*) FROM knownsender WHERE sender = :sender")
     Long countBySender(String sender);
 
-    @Query("SELECT DISTINCT(sender) FROM push")
+    @Query("SELECT DISTINCT(sender) FROM knownsender")
     List<String> findSenders();
 
     @Insert
-    void insert(Push... pushes);
+    void insert(KnownSender... pushes);
 
     @Delete
-    void delete(Push push);
+    void delete(KnownSender push);
 
 
 }

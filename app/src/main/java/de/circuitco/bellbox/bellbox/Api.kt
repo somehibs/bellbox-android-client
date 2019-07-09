@@ -75,10 +75,6 @@ class Api(val queue: RequestQueue) {
         return "http://%s:%d/".format(HOST, PORT)
     }
 
-    fun AddAuthHeader(token: String, request: Request<Any>) {
-        request.headers[AUTH_HEADER] = token
-    }
-
     private fun GetArray(path: String, token: String, responseCallback: ApiArrayResponse) {
         val jsonObjectRequest = object : JsonArrayRequest(
                 getUrl() + path,

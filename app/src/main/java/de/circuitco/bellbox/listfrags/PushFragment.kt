@@ -13,6 +13,7 @@ import android.widget.Toast
 import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.model.AppDatabase
+import de.circuitco.bellbox.model.Push
 import kotlinx.android.synthetic.main.bells.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -20,10 +21,8 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 
 @SuppressLint("SetTextI18n")
-class PushCategoryFragment : Fragment(), OnCategoryClick {
-    override fun click(category: String) {
-        (activity as MainActivity).setFrag(PushFragment.new(category))
-    }
+class PushFragment : Fragment() {
+    var sender = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.bells, container, false)
@@ -40,30 +39,32 @@ class PushCategoryFragment : Fragment(), OnCategoryClick {
     override fun onResume() {
         super.onResume()
         // Refresh from the server
+        sender = arguments?.getString("SENDER") ?: ""
         GlobalScope.launch {
             refreshFromDatabase()
         }
     }
 
-    private fun refreshFromDatabase() {
-        val senderMap = HashMap<String, Long>()
-        val senders = AppDatabase.getDatabase(context).pushDao().findSenders()
-        for (sender in senders) {
-            val count = AppDatabase.getDatabase(context).pushDao().countBySender(sender)
-            senderMap[sender] = count
-        }
-        val adapter = PushCategoryListAdapter(senders, senderMap, this)
+    suspend fun refreshFromDatabase() {
+        val notifications = AppDatabase.getDatabase(context).pushDao().findBySender(sender)
+        val adapter = PushAdapter(notifications)
         activity?.runOnUiThread {
             list.adapter = adapter
         }
     }
+
+    companion object {
+        fun new(name: String): PushFragment {
+            val frag = PushFragment()
+            val args = Bundle()
+            args.putString("SENDER", name)
+            frag.arguments = args
+            return frag
+        }
+    }
 }
 
-interface OnCategoryClick {
-    fun click(category: String)
-}
-
-class PushCategoryListAdapter(val senders: List<String>, val map: Map<String, Long>, val click :OnCategoryClick) : RecyclerView.Adapter<PushCategoryViewHolder>() {
+class PushAdapter(val senders: List<Push>) : RecyclerView.Adapter<PushCategoryViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PushCategoryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.bell_item, parent, false)
         return PushCategoryViewHolder(view)
@@ -74,21 +75,19 @@ class PushCategoryListAdapter(val senders: List<String>, val map: Map<String, Lo
     }
 
     override fun onBindViewHolder(holder: PushCategoryViewHolder, position: Int) {
-        val thisName = senders[position]
-        val thisObject = map[thisName]
-        holder.name?.text = thisName
-        holder.type?.text = "${thisObject.toString()} push notifications"
+        val push = senders[position]
+        holder.name?.text = push.title
+        holder.type?.text = "${push.description}"
         holder.view.setOnLongClickListener {
             Toast.makeText(holder.view.context, "Name ${holder.name?.text} ${holder.key?.text}", Toast.LENGTH_LONG).show()
             true
         }
         holder.view.setOnClickListener {
-            click.click(thisName)
         }
     }
 }
 
-data class PushCategoryViewHolder(var view: View,
+data class PushViewHolder(var view: View,
                                   var name: TextView? = view.findViewById(R.id.name),
                                   var type: TextView? = view.findViewById(R.id.type),
                                   var key: TextView? = view.findViewById(R.id.key)

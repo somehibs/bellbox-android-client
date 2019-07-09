@@ -61,6 +61,12 @@ class PushService : FirebaseMessagingService() {
             builder.setLights(255, 500, 500)
             builder.setContentTitle(data["title"])
             builder.setContentText(data["body"])
+            /*.setStyle(NotificationCompat.InboxStyle()
+                .addLine(messageSnippet1)
+                .addLine(messageSnippet2))*/
+//            builder.setGroup(data["sender"])
+//            builder.setGroupSummary(true)
+            builder.setAutoCancel(true)
             builder.setSmallIcon(R.drawable.irc)
             builder.setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
 
