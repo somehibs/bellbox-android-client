@@ -1,10 +1,13 @@
 package de.circuitco.bellbox.bellbox
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import com.android.volley.VolleyError
+import de.circuitco.bellbox.login.LoginActivity
 import org.json.JSONObject
 
-class ApiManager() {
+class ApiManager {
 	private lateinit var preferences: SharedPreferences
 	val API_TOKEN = "api_token"
 	var token = ""
@@ -44,6 +47,17 @@ class ApiManager() {
 				loginCallback.onError()
 			}
 		})
+	}
+
+	fun handleError(it: VolleyError?) {
+		val status = it?.networkResponse?.statusCode
+		if (status == 403) {
+			// Failed authentication
+			token = ""
+		}
+		if (!isLoggedIn()) {
+			de.circuitco.bellbox.Application.instance.startActivity(Intent(de.circuitco.bellbox.Application.instance, LoginActivity::class.java))
+		}
 	}
 
 	companion object {

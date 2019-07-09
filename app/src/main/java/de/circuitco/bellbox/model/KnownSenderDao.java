@@ -14,25 +14,22 @@ import java.util.List;
 @Dao
 public interface KnownSenderDao {
     @Query("SELECT * FROM knownsender")
-    List<Push> getAll();
+    List<KnownSender> getAll();
 
     @Query("SELECT * FROM knownsender WHERE uid IN (:ids)")
-    List<Push> findByIds(int[] ids);
+    List<KnownSender> findByIds(int[] ids);
 
     @Query("SELECT * FROM knownsender WHERE sender = :sender")
-    List<Push> findBySender(String sender);
-
-    @Query("SELECT COUNT(*) FROM knownsender WHERE sender = :sender")
-    Long countBySender(String sender);
+    List<KnownSender> findBySender(String sender);
 
     @Query("SELECT DISTINCT(sender) FROM knownsender")
     List<String> findSenders();
 
     @Insert
-    void insert(KnownSender... pushes);
+    void insert(KnownSender... senders);
 
     @Delete
-    void delete(KnownSender push);
+    void delete(KnownSender sender);
 
 
 }

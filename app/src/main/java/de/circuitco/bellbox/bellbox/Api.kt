@@ -30,6 +30,7 @@ class Api(val queue: RequestQueue) {
         val jsonObjectRequest = object : JsonObjectRequest(Request.Method.POST, getUrl() + path, request, Response.Listener {
             responseCallback.onResponse(it)
         }, Response.ErrorListener {
+            ApiManager.instance.handleError(it)
             responseCallback.onFail()
         }) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -82,6 +83,7 @@ class Api(val queue: RequestQueue) {
                     responseCallback.onResponse(it)
                 },
                 Response.ErrorListener {
+                    ApiManager.instance.handleError(it)
                     responseCallback.onFail()
                 }
         ) {

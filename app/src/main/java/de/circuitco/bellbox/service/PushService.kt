@@ -14,7 +14,9 @@ import com.google.firebase.messaging.RemoteMessage
 import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.model.AppDatabase
+import de.circuitco.bellbox.model.KnownSender
 import de.circuitco.bellbox.model.Push
+import java.lang.NullPointerException
 
 /**
  * Created by alex on 1/20/2018.
@@ -43,16 +45,24 @@ class PushService : FirebaseMessagingService() {
     private fun notify(data: Map<String, String>) {
         if (data.contains("title") || data.contains("body")) {
             val manager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager? ?: return
-            val src = data["source"] ?: "unknown"
-            val e = when (src) {
-                "irc" -> (Math.random()*1000).toInt()
-                "vrc" -> 100
-                "unknown" -> 100000
-                else -> 100000
+            val src = data["sender"] ?: "unknown"
+            // Find out if this sender is in the database already
+            val senderDao = AppDatabase.getDatabase(this).knownSenderDao()
+            var sender = KnownSender()
+            sender.sender = src
+            var dbSender = senderDao.findBySender(src)
+            if (dbSender.size == 0) {
+                senderDao.insert(sender)
+                dbSender = senderDao.findBySender(src)
+            }
+            if (dbSender.size > 0) {
+                sender = dbSender[0]
+            } else {
+                throw NullPointerException("Oh fuck this isn't supposed to happen")
             }
             val builder: Notification.Builder
             builder = if (Build.VERSION.SDK_INT >= 26) {
-                checkChannel(manager, src)
+                checkChannel(manager, ""+sender.uid, src)
                 Notification.Builder(this, src)
             } else {
                 Notification.Builder(this)
@@ -70,13 +80,18 @@ class PushService : FirebaseMessagingService() {
             builder.setSmallIcon(R.drawable.irc)
             builder.setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
 
-            manager.notify(e, builder.build())
+            manager.notify(sender.uid, builder.build())
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun checkChannel(manager: NotificationManager, channel: String) {
-        val chan = NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_HIGH)
+    private fun checkChannel(manager: NotificationManager, uid: String, channel: String) {
+        val existingChannel = manager.getNotificationChannel(uid)
+        if (existingChannel.name != channel) {
+            manager.deleteNotificationChannel(uid)
+        }
+        val chan = NotificationChannel(uid, channel, NotificationManager.IMPORTANCE_HIGH)
+
         manager.createNotificationChannel(chan)
     }
 

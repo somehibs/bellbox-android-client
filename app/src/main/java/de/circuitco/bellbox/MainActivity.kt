@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -15,7 +14,6 @@ import de.circuitco.bellbox.listfrags.BellringerFragment
 import de.circuitco.bellbox.listfrags.PushCategoryFragment
 import de.circuitco.bellbox.login.LoginActivity
 import de.circuitco.bellbox.login.PushCheckCallback
-import de.circuitco.bellbox.model.AppDatabase.getDatabase
 import de.circuitco.bellbox.model.Push
 import de.circuitco.bellbox.service.PushService
 
@@ -70,24 +68,28 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        all = getDatabase(this).pushDao().all
-        
-        all.forEach {
-            Log.e(logTag, "Push received: $it")
+        if (!ApiManager.instance.isLoggedIn()) {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        //val info = findViewById<TextView>(R.id.infoText)
-        //info.text = ""
-        var infoText = ""
-
-        all.forEach {
-            infoText += it.title + "\n" + it.originalData + "\n\n"
-        }
-
-        //info.text = infoText
-//        info.text = "${PushService.getToken(this)} $infoText"
-
-        val LOG_TAG = "token"
-        Log.e(LOG_TAG,PushService.getToken(this))
+//        all = getDatabase(this).pushDao().all
+//
+//        all.forEach {
+//            Log.e(logTag, "Push received: $it")
+//        }
+//
+//        //val info = findViewById<TextView>(R.id.infoText)
+//        //info.text = ""
+//        var infoText = ""
+//
+//        all.forEach {
+//            infoText += it.title + "\n" + it.originalData + "\n\n"
+//        }
+//
+//        //info.text = infoText
+////        info.text = "${PushService.getToken(this)} $infoText"
+//
+//        val LOG_TAG = "token"
+//        Log.e(LOG_TAG,PushService.getToken(this))
     }
 }

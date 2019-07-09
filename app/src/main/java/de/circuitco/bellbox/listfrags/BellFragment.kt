@@ -16,6 +16,7 @@ import de.circuitco.bellbox.bellbox.ApiArrayResponse
 import de.circuitco.bellbox.bellbox.ApiManager
 import kotlinx.android.synthetic.main.bells.*
 import org.json.JSONArray
+import org.json.JSONObject
 
 @SuppressLint("SetTextI18n")
 class BellFragment : Fragment(), ApiArrayResponse {
@@ -24,7 +25,9 @@ class BellFragment : Fragment(), ApiArrayResponse {
     }
 
     override fun onResponse(obj: JSONArray) {
-        list.adapter = BellListAdapter(obj)
+        list.adapter = BellListAdapter(obj) {
+            Toast.makeText(context, "Name ${it.getString("Name")} ${it.getString("Key")}", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,7 +49,7 @@ class BellFragment : Fragment(), ApiArrayResponse {
     }
 }
 
-class BellListAdapter(val json: JSONArray) : RecyclerView.Adapter<BellViewHolder>() {
+class BellListAdapter(val json: JSONArray, val onClick: (JSONObject) -> Unit) : RecyclerView.Adapter<BellViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BellViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.bell_item, parent, false)
         return BellViewHolder(view)
@@ -62,7 +65,7 @@ class BellListAdapter(val json: JSONArray) : RecyclerView.Adapter<BellViewHolder
         holder.type?.text = thisObject.getString("Type")
         holder.key?.text = thisObject.getString("Key")
         holder.view.setOnLongClickListener {
-            Toast.makeText(holder.view.context, "Name ${holder.name?.text} ${holder.key?.text}", Toast.LENGTH_LONG).show()
+            onClick(thisObject)
             true
         }
     }
