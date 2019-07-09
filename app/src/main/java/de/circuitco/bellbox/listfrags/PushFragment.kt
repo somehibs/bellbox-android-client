@@ -24,7 +24,7 @@ import org.json.JSONArray
 
 @SuppressLint("SetTextI18n")
 class PushFragment : BellboxFragment() {
-    override fun getBarTitle(): String = "From $sender"
+    override fun getBarTitle(): String = "$sender notifications"
 
     var sender = ""
 
