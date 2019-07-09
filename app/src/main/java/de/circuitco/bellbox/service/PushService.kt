@@ -36,6 +36,7 @@ class PushService : FirebaseMessagingService() {
         Log.e("Test", kv);
         push.originalData = kv
         push.description = remoteMessage.data["body"]
+        push.timestamp = remoteMessage.data["time"]
         push.title = remoteMessage.data["title"]
         push.sender = remoteMessage.data["sender"]
         AppDatabase.getDatabase(this).pushDao().insert(push)

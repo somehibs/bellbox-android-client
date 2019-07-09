@@ -66,6 +66,13 @@ class Api(val queue: RequestQueue) {
         PostObj("send/accept", token, request, responseCallback)
     }
 
+    fun DeleteBell(token : String, bellKey: String, bellName: String, responseCallback :ApiResponse) {
+        val request = JSONObject()
+        request.put("key", bellKey)
+        request.put("name", bellName)
+        PostObj("bell/delete", token, request, responseCallback)
+    }
+
     fun DenySender(token : String, index : Int, responseCallback :ApiResponse) {
         val request = JSONObject()
         request.put("index", index)

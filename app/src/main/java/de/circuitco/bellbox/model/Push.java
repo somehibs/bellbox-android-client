@@ -21,4 +21,6 @@ public class Push {
     public String description;
     @ColumnInfo(name = "sender")
     public String sender;
+    @ColumnInfo(name = "timestamp")
+    public String timestamp;
 }

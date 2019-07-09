@@ -49,6 +49,9 @@ class PushCategoryFragment : Fragment(), OnCategoryClick {
         val senderMap = HashMap<String, Long>()
         val senders = AppDatabase.getDatabase(context).pushDao().findSenders()
         for (sender in senders) {
+            if (sender == null) {
+                continue
+            }
             val count = AppDatabase.getDatabase(context).pushDao().countBySender(sender)
             senderMap[sender] = count
         }
@@ -74,7 +77,7 @@ class PushCategoryListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return senders.size
+        return map.size
     }
 
     override fun onBindViewHolder(holder: PushCategoryViewHolder, position: Int) {

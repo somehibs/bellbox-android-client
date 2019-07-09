@@ -1,8 +1,10 @@
 package de.circuitco.bellbox.listfrags
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -14,6 +16,7 @@ import de.circuitco.bellbox.R
 import de.circuitco.bellbox.bellbox.Api
 import de.circuitco.bellbox.bellbox.ApiArrayResponse
 import de.circuitco.bellbox.bellbox.ApiManager
+import de.circuitco.bellbox.bellbox.ApiResponse
 import kotlinx.android.synthetic.main.bells.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -61,14 +64,10 @@ class BellListAdapter(val json: JSONArray, val onClick: (JSONObject) -> Unit) : 
 
     override fun onBindViewHolder(holder: BellViewHolder, position: Int) {
         val thisObject = json.getJSONObject(position)
-        //holder.bind(thisObject)
+        holder.bind(thisObject)
         holder.name?.text = thisObject.getString("Name")
         holder.type?.text = thisObject.getString("Type")
         holder.key?.text = thisObject.getString("Key")
-//        holder.view.setOnLongClickListener {
-//            onClick(thisObject)
-//            true
-//        }
     }
 }
 
@@ -76,4 +75,30 @@ data class BellViewHolder(var view: View,
                      var name: TextView? = view.findViewById(R.id.name),
                      var type: TextView? = view.findViewById(R.id.type),
                      var key: TextView? = view.findViewById(R.id.key)
-                    ) : RecyclerView.ViewHolder(view)
+                    ) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    var obj = JSONObject()
+    fun delete() {
+        val name = obj.getString("Name")
+        //val type = obj.getString("Type")
+        val key = obj.getString("Key")
+        Api.instance.DeleteBell(ApiManager.instance.token, key, name, object : ApiResponse {
+            override fun onFail() {
+
+            }
+
+            override fun onResponse(obj: JSONObject) {
+                // Deleted
+                Toast.makeText(view.context, "Deleted bell ${name} from the server!", Toast.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    override fun onClick(v: View?) {
+        AlertDialog.Builder(view.context).setTitle("Manage ${name?.text.toString()}").setMessage("What do you want to do?").setPositiveButton("Delete") { _: DialogInterface, _: Int -> delete() }.create().show()
+    }
+
+    fun bind(item: JSONObject) {
+        obj = item
+        view.setOnClickListener(this)
+    }
+}
