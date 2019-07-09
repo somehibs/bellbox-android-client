@@ -88,5 +88,6 @@ data class PushViewHolder(var view: View,
     fun bind(push: Push) {
         name?.text = push.title
         type?.text = push.description
+        key?.text = push.timestamp
     }
 }
