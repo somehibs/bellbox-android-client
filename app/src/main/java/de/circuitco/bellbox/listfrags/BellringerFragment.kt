@@ -3,6 +3,7 @@ package de.circuitco.bellbox.listfrags
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import de.circuitco.bellbox.bellbox.ApiArrayResponse
 import de.circuitco.bellbox.bellbox.ApiManager
 import kotlinx.android.synthetic.main.bells.*
 import org.json.JSONArray
+import org.json.JSONObject
 
 @SuppressLint("SetTextI18n")
 class BellringerFragment : Fragment(), ApiArrayResponse {
@@ -24,7 +26,15 @@ class BellringerFragment : Fragment(), ApiArrayResponse {
     }
 
     override fun onResponse(obj: JSONArray) {
-        list.adapter = BellringerListAdapter(obj)
+        list.adapter = BellringerListAdapter(obj) {
+            val state = it.getInt("RequestState")
+            if (state == 1) {
+                // deny
+            } else {
+                // allow
+            }
+            //AlertDialog.Builder()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,10 +56,10 @@ class BellringerFragment : Fragment(), ApiArrayResponse {
     }
 }
 
-class BellringerListAdapter(val json: JSONArray) : RecyclerView.Adapter<BellringerViewHolder>() {
+class BellringerListAdapter(val json: JSONArray, val onClick: (JSONObject) -> Unit) : RecyclerView.Adapter<BellringerViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BellringerViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.bell_item, parent, false)
-        return BellringerViewHolder(view)
+        return BellringerViewHolder(view, onClick)
     }
 
     override fun getItemCount(): Int {
@@ -58,24 +68,33 @@ class BellringerListAdapter(val json: JSONArray) : RecyclerView.Adapter<Bellring
 
     override fun onBindViewHolder(holder: BellringerViewHolder, position: Int) {
         val thisObject = json.getJSONObject(position)
-        val rqs = when (thisObject.getString("RequestState")) {
+        holder.bind(thisObject)
+    }
+}
+
+data class BellringerViewHolder(var view: View,
+                                  var clickParent: (JSONObject) -> Unit,
+                                  var name: TextView? = view.findViewById(R.id.name),
+                                  var type: TextView? = view.findViewById(R.id.type),
+                                  var key: TextView? = view.findViewById(R.id.key)
+) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    var ringer: JSONObject = JSONObject()
+
+    override fun onClick(v: View?) {
+        clickParent(ringer)
+    }
+
+    fun bind(ringer: JSONObject) {
+        this.ringer = ringer
+        val rqs = when (ringer.getString("RequestState")) {
             "0" -> "Pending"
             "1" -> "Allowed"
             "2" -> "Denied"
             else -> "Unknown state"
         }
-        holder.name?.text = thisObject.getString("Name")
-        holder.type?.text = "${thisObject.getString("Target")} $rqs"
-        holder.key?.text = thisObject.getString("Urgent")
-        holder.view.setOnLongClickListener {
-            Toast.makeText(holder.view.context, "Name ${holder.name?.text} ${holder.key?.text}", Toast.LENGTH_LONG).show()
-            true
-        }
+        name?.text = ringer.getString("Name")
+        type?.text = "${ringer.getString("Target")} $rqs"
+        key?.text = ringer.getString("Urgent")
+        view.setOnClickListener(this)
     }
 }
-
-data class BellringerViewHolder(var view: View,
-                     var name: TextView? = view.findViewById(R.id.name),
-                     var type: TextView? = view.findViewById(R.id.type),
-                     var key: TextView? = view.findViewById(R.id.key)
-                    ) : RecyclerView.ViewHolder(view)

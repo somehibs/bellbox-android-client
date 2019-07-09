@@ -61,13 +61,14 @@ class BellListAdapter(val json: JSONArray, val onClick: (JSONObject) -> Unit) : 
 
     override fun onBindViewHolder(holder: BellViewHolder, position: Int) {
         val thisObject = json.getJSONObject(position)
+        //holder.bind(thisObject)
         holder.name?.text = thisObject.getString("Name")
         holder.type?.text = thisObject.getString("Type")
         holder.key?.text = thisObject.getString("Key")
-        holder.view.setOnLongClickListener {
-            onClick(thisObject)
-            true
-        }
+//        holder.view.setOnLongClickListener {
+//            onClick(thisObject)
+//            true
+//        }
     }
 }
 

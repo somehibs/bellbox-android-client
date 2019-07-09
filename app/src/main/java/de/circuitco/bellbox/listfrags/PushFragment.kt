@@ -64,26 +64,19 @@ class PushFragment : Fragment() {
     }
 }
 
-class PushAdapter(val senders: List<Push>) : RecyclerView.Adapter<PushCategoryViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PushCategoryViewHolder {
+class PushAdapter(val senders: List<Push>) : RecyclerView.Adapter<PushViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PushViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.bell_item, parent, false)
-        return PushCategoryViewHolder(view)
+        return PushViewHolder(view)
     }
 
     override fun getItemCount(): Int {
         return senders.size
     }
 
-    override fun onBindViewHolder(holder: PushCategoryViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PushViewHolder, position: Int) {
         val push = senders[position]
-        holder.name?.text = push.title
-        holder.type?.text = "${push.description}"
-        holder.view.setOnLongClickListener {
-            Toast.makeText(holder.view.context, "Name ${holder.name?.text} ${holder.key?.text}", Toast.LENGTH_LONG).show()
-            true
-        }
-        holder.view.setOnClickListener {
-        }
+        holder.bind(push)
     }
 }
 
@@ -91,4 +84,9 @@ data class PushViewHolder(var view: View,
                                   var name: TextView? = view.findViewById(R.id.name),
                                   var type: TextView? = view.findViewById(R.id.type),
                                   var key: TextView? = view.findViewById(R.id.key)
-                    ) : RecyclerView.ViewHolder(view)
+                    ) : RecyclerView.ViewHolder(view) {
+    fun bind(push: Push) {
+        name?.text = push.title
+        type?.text = push.description
+    }
+}

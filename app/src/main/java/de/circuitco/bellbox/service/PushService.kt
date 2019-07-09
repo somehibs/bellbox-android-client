@@ -63,7 +63,7 @@ class PushService : FirebaseMessagingService() {
             val builder: Notification.Builder
             builder = if (Build.VERSION.SDK_INT >= 26) {
                 checkChannel(manager, ""+sender.uid, src)
-                Notification.Builder(this, src)
+                Notification.Builder(this, ""+sender.uid)
             } else {
                 Notification.Builder(this)
             }
@@ -78,16 +78,17 @@ class PushService : FirebaseMessagingService() {
 //            builder.setGroupSummary(true)
             builder.setAutoCancel(true)
             builder.setSmallIcon(R.drawable.irc)
+            //builder.setSmallIcon(R.drawable.irc)
             builder.setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
 
-            manager.notify(sender.uid, builder.build())
+            manager.notify(10+sender.uid, builder.build())
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun checkChannel(manager: NotificationManager, uid: String, channel: String) {
         val existingChannel = manager.getNotificationChannel(uid)
-        if (existingChannel.name != channel) {
+        if (existingChannel?.name != channel) {
             manager.deleteNotificationChannel(uid)
         }
         val chan = NotificationChannel(uid, channel, NotificationManager.IMPORTANCE_HIGH)

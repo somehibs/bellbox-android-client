@@ -6,6 +6,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/defaultTextView</item>
+        <item name="android:itemBackground">@color/neutral</item>
+    </style>
+
+    <style name="defaultTextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/neutral_text</item>
     </style>
 
 </resources>

@@ -17,6 +17,7 @@
         android:id="@+id/pass"
         android:layout_margin="15dp"
         android:hint="Pass"
+        android:inputType="textPassword"
         app:layout_constraintTop_toBottomOf="@id/user"
         app:layout_constraintBottom_toTopOf="@id/login"
         android:layout_width="match_parent"

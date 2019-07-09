@@ -63,10 +63,14 @@ interface OnCategoryClick {
     fun click(category: String)
 }
 
-class PushCategoryListAdapter(val senders: List<String>, val map: Map<String, Long>, val click :OnCategoryClick) : RecyclerView.Adapter<PushCategoryViewHolder>() {
+class PushCategoryListAdapter(
+        private val senders: List<String>,
+        private val map: Map<String, Long>,
+        private val click :OnCategoryClick
+) : RecyclerView.Adapter<PushCategoryViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PushCategoryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.bell_item, parent, false)
-        return PushCategoryViewHolder(view)
+        return PushCategoryViewHolder(view, click)
     }
 
     override fun getItemCount(): Int {
@@ -76,20 +80,26 @@ class PushCategoryListAdapter(val senders: List<String>, val map: Map<String, Lo
     override fun onBindViewHolder(holder: PushCategoryViewHolder, position: Int) {
         val thisName = senders[position]
         val thisObject = map[thisName]
-        holder.name?.text = thisName
-        holder.type?.text = "${thisObject.toString()} push notifications"
-        holder.view.setOnLongClickListener {
-            Toast.makeText(holder.view.context, "Name ${holder.name?.text} ${holder.key?.text}", Toast.LENGTH_LONG).show()
-            true
-        }
-        holder.view.setOnClickListener {
-            click.click(thisName)
-        }
+        holder.bind(thisName, thisObject)
     }
 }
 
 data class PushCategoryViewHolder(var view: View,
+                                  var clickParent: OnCategoryClick,
                                   var name: TextView? = view.findViewById(R.id.name),
                                   var type: TextView? = view.findViewById(R.id.type),
                                   var key: TextView? = view.findViewById(R.id.key)
-                    ) : RecyclerView.ViewHolder(view)
+                    ) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    var sender = ""
+
+    override fun onClick(v: View?) {
+        clickParent.click(sender)
+    }
+
+    fun bind(sender: String, size: Long?) {
+        this.sender = sender
+        name?.text = sender
+        type?.text = "${size.toString()} push notifications"
+        view.setOnClickListener(this)
+    }
+}
