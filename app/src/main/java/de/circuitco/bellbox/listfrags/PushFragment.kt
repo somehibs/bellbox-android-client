@@ -1,6 +1,7 @@
 package de.circuitco.bellbox.listfrags
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,6 +17,7 @@ import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.model.AppDatabase
 import de.circuitco.bellbox.model.Push
+import de.circuitco.bellbox.service.PushService
 import kotlinx.android.synthetic.main.bells.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -23,7 +25,11 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 
 @SuppressLint("SetTextI18n")
-class PushFragment : BellboxFragment() {
+class PushFragment : BellboxFragment(), Observer<Long> {
+    override fun onChanged(t: Long?) {
+        refresh()
+    }
+
     override fun getBarTitle(): String = "$sender notifications"
 
     var sender = ""
@@ -40,6 +46,7 @@ class PushFragment : BellboxFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        PushService.changed.observe(this, this)
         list.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)

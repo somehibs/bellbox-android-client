@@ -1,28 +1,29 @@
 package de.circuitco.bellbox.listfrags
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import de.circuitco.bellbox.BellboxFragment
 import de.circuitco.bellbox.MainActivity
 import de.circuitco.bellbox.R
 import de.circuitco.bellbox.model.AppDatabase
+import de.circuitco.bellbox.service.PushService
 import kotlinx.android.synthetic.main.bells.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONArray
 
 @SuppressLint("SetTextI18n")
-class PushCategoryFragment : BellboxFragment(), OnCategoryClick {
+class PushCategoryFragment : BellboxFragment(), OnCategoryClick, Observer<Long> {
+    override fun onChanged(t: Long?) {
+        refresh()
+    }
+
     override fun getBarTitle(): String = "Inbox"
 
     override fun click(category: String) {
@@ -35,6 +36,7 @@ class PushCategoryFragment : BellboxFragment(), OnCategoryClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        PushService.changed.observe(this, this)
         list.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)

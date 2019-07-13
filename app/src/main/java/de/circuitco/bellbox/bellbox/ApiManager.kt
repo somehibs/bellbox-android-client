@@ -3,6 +3,7 @@ package de.circuitco.bellbox.bellbox
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
 import com.android.volley.VolleyError
 import de.circuitco.bellbox.login.LoginActivity
 import org.json.JSONObject
@@ -54,6 +55,12 @@ class ApiManager {
 		if (status == 403) {
 			// Failed authentication
 			token = ""
+		} else {
+			val body = it?.networkResponse?.data
+			Log.w("Api", "Request failed: " + status)
+			try { Log.w("Api", "body: " + String(body!!)) } catch (e: KotlinNullPointerException) {
+
+			}
 		}
 		if (!isLoggedIn()) {
 			de.circuitco.bellbox.Application.instance.startActivity(Intent(de.circuitco.bellbox.Application.instance, LoginActivity::class.java))

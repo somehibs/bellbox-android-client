@@ -60,9 +60,9 @@ class Api(val queue: RequestQueue) {
         GetArray("send/map", token, responseCallback)
     }
 
-    fun AcceptSender(token : String, index : Int, responseCallback :ApiResponse) {
+    fun AcceptSender(token : String, name : String, responseCallback :ApiResponse) {
         val request = JSONObject()
-        request.put("index", index)
+        request.put("Name", name)
         PostObj("send/accept", token, request, responseCallback)
     }
 
@@ -73,9 +73,9 @@ class Api(val queue: RequestQueue) {
         PostObj("bell/delete", token, request, responseCallback)
     }
 
-    fun DenySender(token : String, index : Int, responseCallback :ApiResponse) {
+    fun DenySender(token : String, name : String, responseCallback :ApiResponse) {
         val request = JSONObject()
-        request.put("index", index)
+        request.put("Name", name)
         PostObj("send/deny", token, request, responseCallback)
     }
 

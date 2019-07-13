@@ -18,6 +18,7 @@ import de.circuitco.bellbox.R
 import de.circuitco.bellbox.bellbox.Api
 import de.circuitco.bellbox.bellbox.ApiArrayResponse
 import de.circuitco.bellbox.bellbox.ApiManager
+import de.circuitco.bellbox.bellbox.ApiResponse
 import kotlinx.android.synthetic.main.bells.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -33,12 +34,35 @@ class BellringerFragment : BellboxFragment(), ApiArrayResponse {
     override fun onResponse(obj: JSONArray) {
         list.adapter = BellringerListAdapter(obj) {
             val state = it.getInt("RequestState")
+            var stateSwitchName: String
             if (state == 1) {
                 // deny
+                stateSwitchName = "Deny"
             } else {
                 // allow
+                stateSwitchName = "Allow"
             }
-            //AlertDialog.Builder()
+            val responseHandler = object : ApiResponse {
+                override fun onResponse(obj: JSONObject) {
+                    Toast.makeText(this@BellringerFragment.context, stateSwitchName + " for " + it.getString("Name") + " succeeded", Toast.LENGTH_LONG).show()
+                    refresh()
+                }
+
+                override fun onFail() {
+                    Toast.makeText(this@BellringerFragment.context, stateSwitchName + " for " + it.getString("Name") + " failed", Toast.LENGTH_LONG).show()
+                }
+            }
+            AlertDialog.Builder(this.activity!!)
+                    .setMessage(stateSwitchName+" notifications from "+it.getString("Name")+"?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        if (state == 1) {
+                            Api.instance.DenySender(ApiManager.instance.token, it.getString("Name"), responseHandler)
+                        } else {
+                            Api.instance.AcceptSender(ApiManager.instance.token, it.getString("Name"), responseHandler)
+                        }
+                    }
+                    .create()
+                    .show()
         }
     }
 
@@ -72,6 +96,7 @@ class BellringerListAdapter(val json: JSONArray, val onClick: (JSONObject) -> Un
 
     override fun onBindViewHolder(holder: BellringerViewHolder, position: Int) {
         val thisObject = json.getJSONObject(position)
+        thisObject.put("index", position)
         holder.bind(thisObject)
     }
 }

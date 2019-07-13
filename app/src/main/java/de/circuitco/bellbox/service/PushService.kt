@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -23,6 +24,7 @@ import java.lang.NullPointerException
  */
 
 class PushService : FirebaseMessagingService() {
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         var push = Push()
         var kv = ""
@@ -40,6 +42,11 @@ class PushService : FirebaseMessagingService() {
         push.title = remoteMessage.data["title"]
         push.sender = remoteMessage.data["sender"]
         AppDatabase.getDatabase(this).pushDao().insert(push)
+        try {
+            changed.postValue(changed.getValue()!!+1L)
+        } catch (e :Exception) {
+            Log.e("LOG", "Push notification received but crashed", e)
+        }
         notify(remoteMessage.data)
     }
 
@@ -103,6 +110,7 @@ class PushService : FirebaseMessagingService() {
     }
 
     companion object {
+        var changed = MutableLiveData<Long>()
         private var FCM_KEY = "fcmkey"
         fun getToken(context: Context): String {
             return context.getSharedPreferences("", 0).getString(FCM_KEY, "")
