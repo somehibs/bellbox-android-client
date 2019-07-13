@@ -50,6 +50,7 @@ class BellringerFragment : BellboxFragment(), ApiArrayResponse {
 
                 override fun onFail() {
                     Toast.makeText(this@BellringerFragment.context, stateSwitchName + " for " + it.getString("Name") + " failed", Toast.LENGTH_LONG).show()
+                    refresh()
                 }
             }
             AlertDialog.Builder(this.activity!!)
