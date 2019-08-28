@@ -13,11 +13,14 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import de.circuitco.bellbox.MainActivity
-import de.circuitco.bellbox.R
 import de.circuitco.bellbox.model.AppDatabase
 import de.circuitco.bellbox.model.KnownSender
 import de.circuitco.bellbox.model.Push
 import java.lang.NullPointerException
+import java.util.*
+import android.support.v4.app.NotificationCompat
+import de.circuitco.bellbox.R
+
 
 /**
  * Created by alex on 1/20/2018.
@@ -68,13 +71,16 @@ class PushService : FirebaseMessagingService() {
             } else {
                 throw NullPointerException("Oh fuck this isn't supposed to happen")
             }
-            val builder: Notification.Builder
+            val builder: NotificationCompat.Builder
             builder = if (Build.VERSION.SDK_INT >= 26) {
                 checkChannel(manager, ""+sender.uid, src)
-                Notification.Builder(this, ""+sender.uid)
+                NotificationCompat.Builder(this, ""+sender.uid)
             } else {
-                Notification.Builder(this)
+                NotificationCompat.Builder(this)
             }
+            val bigStyle = NotificationCompat.BigTextStyle()
+            bigStyle.setBigContentTitle(data["title"])
+            bigStyle.bigText(data["body"])
 
             builder.setLights(255, 500, 500)
             builder.setContentTitle(data["title"])
@@ -86,6 +92,16 @@ class PushService : FirebaseMessagingService() {
 //            builder.setGroupSummary(true)
             builder.setAutoCancel(true)
             builder.setSmallIcon(R.drawable.irc)
+            if (sender.sender == "Maps location") {
+                builder.setSmallIcon(R.drawable.running_woman_512)
+            }
+//            if (data["time"] == null) {
+                builder.setWhen(Date().time)
+//            } else {
+//                builder.setWhen(data["time"]!!.toLong())
+//            }
+            builder.setStyle(bigStyle)
+            builder.setShowWhen(true)
             //builder.setSmallIcon(R.drawable.irc)
             builder.setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
 
