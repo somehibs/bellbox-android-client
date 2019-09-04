@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.util.Log
@@ -44,6 +45,7 @@ class PushService : FirebaseMessagingService() {
         push.timestamp = remoteMessage.data["time"]
         push.title = remoteMessage.data["title"]
         push.sender = remoteMessage.data["sender"]
+        //push.url = remoteMessage.data["url"]
         AppDatabase.getDatabase(this).pushDao().insert(push)
         try {
             changed.postValue(changed.getValue()!!+1L)
@@ -103,7 +105,12 @@ class PushService : FirebaseMessagingService() {
             builder.setStyle(bigStyle)
             builder.setShowWhen(true)
             //builder.setSmallIcon(R.drawable.irc)
-            builder.setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
+            if (data.containsKey("url") && data["url"].isNullOrEmpty() == false) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(data["url"]))
+                builder.setContentIntent(PendingIntent.getActivity(this, 0, intent, 0))
+            } else {
+                builder.setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0))
+            }
 
             manager.notify(10+sender.uid, builder.build())
         }
